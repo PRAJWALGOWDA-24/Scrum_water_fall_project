@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrum vs Waterfall Simulator</title>
+ 
+</head>
+<body>
+
+<div class="container">
+    <h1>Software Development Methodology Simulator</h1>
+    <p>Select a model to start</p>
+
+    <button onclick="start()">Start Project</button>
+    <br><br>
+    <a href="comparison.html">Compare Scrum vs Waterfall</a>
+
+    <h3>Tasks from DB</h3>
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+function start() {
+    window.location.href = "create-project.html";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("tasks?projectId=1")
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById("taskList");
+        data.forEach(task => {
+          const li = document.createElement("li");
+          li.textContent = task.taskName + " (" + task.status + ")";
+          list.appendChild(li);
+        });
+      })
+      .catch(err => console.error(err));
+});
+</script>
+
+</body>
+</html>
+
+
+
+<!--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrum vs Waterfall Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<div class="container">
+    <h1>Software Development Methodology Simulator</h1>
+    <p>Select a model to start</p>
+
+    <button onclick="start()">Start Project</button>
+    <br><br>
+    <a href="comparison.html">Compare Scrum vs Waterfall</a>
+</div>
+
+<script>
+
+    function start() {
+        window.location.href = "create-project.html";
+    }
+    
+</script>
+
+<script>
+fetch("tasks?projectId=1")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+
+    const list = document.getElementById("taskList");
+    data.forEach(task => {
+      const li = document.createElement("li");
+      li.textContent = task.taskName + " (" + task.status + ")";
+      list.appendChild(li);
+    });
+  });
+</script>
+
+<ul id="taskList"></ul>
+
+</body>
+</html>
+-->

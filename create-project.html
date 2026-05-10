@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<>
+<head>
+    <title>Create Project</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<div class="container">
+    <h2>Create New Project</h2>
+
+    <label>Project Name:</label><br>
+    <input type="text" id="projectName"><br><br>
+
+    <label>Team Size:</label><br>
+    <input type="number" id="teamSize"><br><br>
+
+    <button onclick="saveProject()">Continue</button>
+</div>
+    <script>
+        function saveProject() {
+            const name = document.getElementById("projectName").value;
+            const team = document.getElementById("teamSize").value;
+
+            localStorage.setItem("projectName", name);
+            localStorage.setItem("teamSize", team);
+
+            window.location.href = "choose-model.html";
+        }
+    </script>
+
+</body>
+</html>

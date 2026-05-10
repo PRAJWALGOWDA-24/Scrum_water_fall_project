@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   
+<div class="container">
+
+    <h2>Create New Project</h2>
+
+    <label>Project Name</label>
+    <input type="text" id="projectName">
+
+    <label>Team Size</label>
+    <input type="number" id="teamSize">
+
+    <button onclick="saveProject()">Continue</button>
+
+</div>
+
+<script>
+    function saveProject() {
+        localStorage.setItem("projectName", document.getElementById("projectName").value);
+        localStorage.setItem("teamSize", document.getElementById("teamSize").value);
+        window.location.href = "choose-model.html";
+    }
+</script>
+
+</body>
+</html>

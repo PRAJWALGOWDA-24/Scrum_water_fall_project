@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scrum Simulation</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Scrum Simulation</h2>
+
+    <!-- Top info section -->
+    <div class="top-info">
+
+        <!-- Display project info -->
+        <div>
+            <p><strong>Project:</strong> <span id="projectName"></span></p>
+            <p><strong>Team Size:</strong> <span id="teamSize"></span></p>
+        </div>
+
+        <!-- Edit project info -->
+        <div>
+            <input type="text" id="projectNameInput" placeholder="Project Name">
+            <input type="number" id="teamSizeInput" placeholder="Team Size">
+            <button onclick="saveProject()">Save</button>
+        </div>
+
+        <!-- Sprint info -->
+        <div>
+            <p><strong>Current Sprint:</strong> <span id="sprintNumber">1</span></p>
+            <button onclick="nextSprint()">Start Next Sprint</button>
+        </div>
+    </div>
+
+    <!-- Scrum board -->
+    <div class="board">
+        <div class="column">
+            <h3>Product Backlog</h3>
+            <ul id="backlog"></ul>
+        </div>
+
+        <div class="column">
+            <h3>In Progress</h3>
+            <ul id="inProgress"></ul>
+        </div>
+
+        <div class="column">
+            <h3>Done</h3>
+            <ul id="done"></ul>
+        </div>
+    </div>
+
+    <br>
+    <a href="choose-model.html">Go Back</a>
+
+</div>
+
+<script>
+let sprint = 1;
+
+/* =========================
+   LOAD PROJECT FROM DB
+   ========================= */
+fetch("project")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("projectName").innerText = data.projectName;
+    document.getElementById("teamSize").innerText = data.teamSize;
+
+    document.getElementById("projectNameInput").value = data.projectName;
+    document.getElementById("teamSizeInput").value = data.teamSize;
+  })
+  .catch(err => console.error("Project load error:", err));
+
+/* =========================
+   SAVE PROJECT TO DB
+   ========================= */
+function saveProject() {
+  const name = document.getElementById("projectNameInput").value;
+  const size = document.getElementById("teamSizeInput").value;
+
+  fetch("project", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `projectName=${name}&teamSize=${size}`
+  })
+  .then(() => location.reload())
+  .catch(err => console.error("Project save error:", err));
+}
+
+/* =========================
+   SPRINT HANDLING
+   ========================= */
+function nextSprint() {
+  sprint++;
+  document.getElementById("sprintNumber").innerText = sprint;
+  document.getElementById("inProgress").innerHTML = "";
+  alert("New Sprint Started!");
+}
+
+/* =========================
+   LOAD TASKS FROM DB
+   ========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("tasks?projectId=1")
+    .then(res => res.json())
+    .then(tasks => {
+
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.innerText = task.taskName + " (Sprint " + task.sprint + ") ";
+
+        // Backlog → Start
+        if (task.status === "Backlog") {
+          const startBtn = document.createElement("button");
+          startBtn.innerText = "Start";
+          startBtn.onclick = () => updateStatus(task.taskId, "In Progress");
+          li.appendChild(startBtn);
+          document.getElementById("backlog").appendChild(li);
+        }
+
+        // In Progress → Complete
+        else if (task.status === "In Progress") {
+          const completeBtn = document.createElement("button");
+          completeBtn.innerText = "Complete";
+          completeBtn.onclick = () => updateStatus(task.taskId, "Done");
+          li.appendChild(completeBtn);
+          document.getElementById("inProgress").appendChild(li);
+        }
+
+        // Done
+        else if (task.status === "Done") {
+          document.getElementById("done").appendChild(li);
+        }
+      });
+
+    })
+    .catch(err => console.error("Task load error:", err));
+});
+
+/* =========================
+   UPDATE TASK STATUS
+   ========================= */
+function updateStatus(taskId, status) {
+  fetch("update-task", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `taskId=${taskId}&status=${status}`
+  })
+  .then(() => location.reload())
+  .catch(err => console.error("Update error:", err));
+}
+</script>
+
+</body>
+</html>
